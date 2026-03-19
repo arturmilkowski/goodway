@@ -23,17 +23,37 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Podstrony',
+        href: '/admin/pages',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Blog',
+        href: '/admin/blog/posts',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
+        title: 'Repozytorium',
+        href: 'https://github.com/arturmilkowski/goodway',
         icon: FolderGit2,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
+        title: 'Laravel',
+        href: 'https://laravel.com/',
+        icon: BookOpen,
+    },
+    {
+        title: 'Vue',
+        href: 'https://vuejs.org/',
+        icon: BookOpen,
+    },
+    {
+        title: 'Inertia',
+        href: 'https://inertiajs.com/',
         icon: BookOpen,
     },
 ];
