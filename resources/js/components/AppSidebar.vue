@@ -33,6 +33,11 @@ const mainNavItems: NavItem[] = [
         href: '/admin/blog/posts',
         icon: LayoutGrid,
     },
+    {
+        title: 'Projekty',
+        href: '/admin/projects',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [

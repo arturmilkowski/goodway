@@ -25,7 +25,11 @@ class Project extends Model
         'site_keyword',
         'approved',
         'hide',
-        'ordinal',
+    ];
+
+    protected $casts = [
+        'approved' => 'boolean',
+        'hide' => 'boolean',
     ];
 
     public function user(): BelongsTo

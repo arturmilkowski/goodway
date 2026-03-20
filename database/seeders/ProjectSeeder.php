@@ -21,7 +21,7 @@ class ProjectSeeder extends Seeder
             'result' => "Rezultat Projektu pierwszego",
             'site_description' => '',
             'site_keyword' => '',
-            'approved' => '1',
+            'approved' => true,
             'hide' => false,
             'created_at' => now(),
             'updated_at' => now(),
