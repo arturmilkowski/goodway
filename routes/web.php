@@ -11,6 +11,9 @@ use App\Http\Controllers\Admin\Project\{ProjectController as AdminProjectControl
 
 
 Route::get('/', [PageController::class, 'index'])->name('pages.index');
+// Route::get('/{page:slug}', function (Page $page) {
+//     return $page;
+// });
 
 /*
 Route::inertia('/', 'Welcome', [
@@ -30,5 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('admin/projects', AdminProjectController::class)->names('admin.projects');
     Route::delete('admin/projects/images/{project}', AdminProjectImgController::class)->name('admin.projects.images.destroy');
 });
+
+// chyba musi być ostatnia
+Route::get('/{page:slug}', [PageController::class, 'show'])->name('pages.show');
 
 require __DIR__ . '/settings.php';

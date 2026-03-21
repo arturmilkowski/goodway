@@ -5,6 +5,8 @@ namespace App\Models\Page;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\User;
 
 class Page extends Model
@@ -28,10 +30,35 @@ class Page extends Model
         'ordinal',
     ];
 
+    /**
+     * Get the route key for the model.
+     */
+    /*
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+    */
+
     protected $casts = [
         'navbar' => 'boolean',
         'hide' => 'boolean',
     ];
+    /**
+     * Scope a query to only include active users.
+     */
+
+    #[Scope]
+    protected function navbar(Builder $query): void
+    {
+        $query->where('navbar', 1);
+    }
+
+    #[Scope]
+    protected function notHide(Builder $query): void
+    {
+        $query->where('hide', 0);
+    }
 
     public function user(): BelongsTo
     {
