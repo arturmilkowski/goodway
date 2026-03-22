@@ -4,5 +4,6 @@
     <main>
         <div>Page:</div>
         <pre>{{ $page }}</pre>
+        <div>Content: {{ $page->content }}</div>
     </main>
 </x-layout>

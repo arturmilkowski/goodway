@@ -44,9 +44,6 @@ class Page extends Model
         'navbar' => 'boolean',
         'hide' => 'boolean',
     ];
-    /**
-     * Scope a query to only include active users.
-     */
 
     #[Scope]
     protected function navbar(Builder $query): void
@@ -58,6 +55,12 @@ class Page extends Model
     protected function notHide(Builder $query): void
     {
         $query->where('hide', 0);
+    }
+
+    #[Scope]
+    protected function parentPage(Builder $query): void
+    {
+        $query->where('parent_id', null);
     }
 
     public function user(): BelongsTo

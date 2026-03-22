@@ -18,7 +18,12 @@ class NavComposer
      */
     public function compose(View $view): void
     {
-        $pages = Page::latest()->navbar()->notHide()->orderBy('ordinal')->get();
+        $pages = Page::latest()
+            ->navbar()
+            ->notHide()
+            ->parentPage()
+            ->orderBy('ordinal')
+            ->get();
 
         $view->with('pages', $pages);
     }
