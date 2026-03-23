@@ -1,5 +1,4 @@
-        <footer>
-            <hr />
+        <footer class="border-t border-black">
             <section>
                 <small>
                         &copy; GoodWay &mdash;
