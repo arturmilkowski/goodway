@@ -22,7 +22,21 @@ class PageSeeder extends Seeder
             'site_keyword' => '',
             'navbar' => true,
             'hide' => false,
-            'ordinal' => 5,
+            'ordinal' => 10,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        \Illuminate\Support\Facades\DB::table('pages')->insert([
+            'user_id' => 1,
+            'slug' => 'o-fundacji',
+            'title' => 'O fundacji',
+            'intro' => 'O fundacji Good Way',
+            'content' => "Fundacja Good Way",
+            'site_description' => '',
+            'site_keyword' => '',
+            'navbar' => true,
+            'hide' => false,
+            'ordinal' => 20,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -36,7 +50,7 @@ class PageSeeder extends Seeder
             'site_keyword' => '',
             'navbar' => true,
             'hide' => false,
-            'ordinal' => 10,
+            'ordinal' => 30,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -50,7 +64,7 @@ class PageSeeder extends Seeder
             'site_keyword' => '',
             'navbar' => true,
             'hide' => false,
-            'ordinal' => 15,
+            'ordinal' => 40,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -64,7 +78,7 @@ class PageSeeder extends Seeder
             'site_keyword' => '',
             'navbar' => true,
             'hide' => false,
-            'ordinal' => 20,
+            'ordinal' => 50,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -78,7 +92,7 @@ class PageSeeder extends Seeder
             'site_keyword' => '',
             'navbar' => true,
             'hide' => false,
-            'ordinal' => 25,
+            'ordinal' => 60,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -92,9 +106,12 @@ class PageSeeder extends Seeder
             'site_keyword' => '',
             'navbar' => true,
             'hide' => false,
-            'ordinal' => 30,
+            'ordinal' => 70,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        // polityka-prywatnosci
+        //  /regulamin
+        // /rodo
     }
 }

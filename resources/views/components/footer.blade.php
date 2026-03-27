@@ -1,6 +1,5 @@
-        <footer class="border-t border-black">
-            <section>
-                <small>
+        <footer class="border-t border-black pt-2">
+            <section class="text-xs">
                         &copy; GoodWay &mdash;
                         @if (App::environment(['local', 'staging']))
 
@@ -10,10 +9,8 @@
                         &mdash;
                         Zalogowany: {{ Auth::user()->name }} {{ Auth::user()->profile?->surname }}
                         @endauth
-                        &mdash; L: {{ Illuminate\Foundation\Application::VERSION }}
-                        &mdash; P: {{ PHP_VERSION }}
+                        &mdash; Laravel: {{ Illuminate\Foundation\Application::VERSION }}
+                        &mdash; PHP: {{ PHP_VERSION }}
                         @endif
-
-                </small>
             </section>
         </footer>

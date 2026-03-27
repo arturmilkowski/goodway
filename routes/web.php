@@ -10,16 +10,11 @@ use App\Http\Controllers\Admin\Blog\Post\{PostController as AdminPostController,
 use App\Http\Controllers\Admin\Project\{ProjectController as AdminProjectController, ImgController as AdminProjectImgController};
 
 
-Route::get('/', [PageController::class, 'index'])->name('pages.index');
-// Route::get('/{page:slug}', function (Page $page) {
-//     return $page;
-// });
+Route::get('/', [PageController::class, 'index'])->name('home'); // pages.index
 
-/*
-Route::inertia('/', 'Welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
-*/
+
+//  Route::inertia('/', 'Welcome', ['canRegister' => Features::enabled(Features::registration()),])->name('home');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
@@ -34,7 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('admin/projects/images/{project}', AdminProjectImgController::class)->name('admin.projects.images.destroy');
 });
 
-// chyba musi być ostatnia
+// musi być na końcu
 Route::get('/{page:slug}', [PageController::class, 'show'])->name('pages.show');
 
 require __DIR__ . '/settings.php';
