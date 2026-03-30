@@ -1,4 +1,4 @@
-        <footer class="border-t border-black pt-2">
+        <footer class="border-t border-x border-black pt-2 px-2 mt-8 mb-4">
             <section class="text-xs">
                         &copy; GoodWay &mdash;
                         @if (App::environment(['local', 'staging']))
