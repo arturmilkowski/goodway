@@ -3,6 +3,7 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 import { router } from '@inertiajs/vue3';
 import { ArrowLeftIcon, SendIcon, Trash2Icon } from 'lucide-vue-next';
 import ImgController from '@/actions/App/Http/Controllers/Admin/Blog/Post/ImgController';
+import Editor from '@/components/Editor.vue';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -124,16 +125,23 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 </FieldError>
                             </Field>
                             <Field>
-                                <FieldLabel for="content"
-                                    >Zawartość wpisu</FieldLabel
-                                >
-                                <Textarea
+                                <FieldLabel for="content">
+                                    Zawartość wpisu
+                                </FieldLabel>
+                                <!-- <Textarea
                                     id="content"
                                     name="content"
                                     v-model="form.content"
                                     placeholder="Pole nieobowiązkowe"
                                 >
-                                </Textarea>
+                                </Textarea> -->
+                                <Editor
+                                    id="content"
+                                    name="content"
+                                    v-model="form.content"
+                                    placeholder="Pole nieobowiązkowe"
+                                >
+                                </Editor>
                                 <FieldError v-if="form.errors.content">
                                     {{ form.errors.content }}
                                 </FieldError>

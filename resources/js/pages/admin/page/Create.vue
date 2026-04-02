@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ArrowLeftIcon, Key, SendIcon } from 'lucide-vue-next';
+import { ArrowLeftIcon, SendIcon } from 'lucide-vue-next';
+import Editor from '@/components/Editor.vue';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -157,6 +158,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 <FieldLabel for="content">
                                     Zawartość podstrony
                                 </FieldLabel>
+                                <Editor
+                                    id="content"
+                                    name="content"
+                                    v-model="form.content"
+                                    placeholder="Pole nieobowiązkowe"
+                                >
+                                </Editor>
+                                <!--
                                 <Textarea
                                     id="content"
                                     name="content"
@@ -164,6 +173,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     placeholder="Pole nieobowiązkowe"
                                 >
                                 </Textarea>
+                                -->
                                 <FieldError v-if="form.errors.content">
                                     {{ form.errors.content }}
                                 </FieldError>

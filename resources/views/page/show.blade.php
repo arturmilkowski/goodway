@@ -4,7 +4,7 @@
         <article>
             <h1 class="mb-8 font-bold text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-3xl">{{ $page->title }}</h1>
             <p class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl">
-                {{ $page->content }}
+                {!! $page->content !!}
              </p>
         </article>
         <div>

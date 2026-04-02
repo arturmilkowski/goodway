@@ -96,7 +96,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </TableRow>
                         <TableRow>
                             <TableCell>Zawartość</TableCell>
-                            <TableCell>{{ post?.content }}</TableCell>
+                            <TableCell>
+                                <span v-html="post?.content"></span>
+                            </TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Opis strony</TableCell>

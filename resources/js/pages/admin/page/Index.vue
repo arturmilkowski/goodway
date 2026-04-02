@@ -4,6 +4,7 @@ import { usePage } from '@inertiajs/vue3';
 import { Plus } from 'lucide-vue-next';
 import { CheckCircle2Icon } from 'lucide-vue-next';
 import { Alert, AlertTitle } from '@/components/ui/alert';
+import Editor from '@/components/Editor.vue';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -68,8 +69,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <TableCell>
                                 <pre>
                                     {{ page.parent?.title }}
-__{{ page.isSubpage }}__  {{ page.children }}</pre
-                                >
+                                    __{{ page.isSubpage }}__  {{
+                                        page.children
+                                    }}
+                                </pre>
                                 <!-- <template v-else>&mdash;</template> -->
                             </TableCell>
                             <TableCell class="w-[150px]">

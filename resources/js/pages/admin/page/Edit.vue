@@ -3,6 +3,7 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 import { router } from '@inertiajs/vue3';
 import { ArrowLeftIcon, SendIcon, Trash2Icon } from 'lucide-vue-next';
 import ImgController from '@/actions/App/Http/Controllers/Admin/Page/ImgController';
+import Editor from '@/components/Editor.vue';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -126,10 +127,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectLabel
-                                                >Frameworki</SelectLabel
-                                            >
-
+                                            <SelectLabel>
+                                                Frameworki
+                                            </SelectLabel>
                                             <SelectItem
                                                 v-for="page in props.pages"
                                                 :key="page.id"
@@ -175,6 +175,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 <FieldLabel for="content">
                                     Zawartość podstrony
                                 </FieldLabel>
+                                <Editor
+                                    id="content"
+                                    name="content"
+                                    v-model="form.content"
+                                    placeholder="Pole nieobowiązkowe"
+                                >
+                                </Editor>
+                                <!--
                                 <Textarea
                                     id="content"
                                     name="content"
@@ -182,6 +190,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     placeholder="Pole nieobowiązkowe"
                                 >
                                 </Textarea>
+                                -->
                                 <FieldError v-if="form.errors.content">
                                     {{ form.errors.content }}
                                 </FieldError>

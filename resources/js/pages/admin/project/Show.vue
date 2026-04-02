@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import { ArrowLeftIcon, CheckCircle2Icon } from 'lucide-vue-next';
 import { Alert, AlertTitle } from '@/components/ui/alert';
+import Editor from '@/components/Editor.vue';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
@@ -76,7 +77,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </TableRow>
                         <TableRow>
                             <TableCell>Zawartość</TableCell>
-                            <TableCell>{{ project?.content }}</TableCell>
+                            <TableCell>
+                                <span v-html="project?.content"></span>
+                            </TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Opis strony</TableCell>

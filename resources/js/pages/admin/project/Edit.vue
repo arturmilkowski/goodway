@@ -124,7 +124,15 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 </FieldError>
                             </Field>
                             <Field>
-                                <FieldLabel for="content"> Cel </FieldLabel>
+                                <FieldLabel for="content">Cel</FieldLabel>
+                                <Editor
+                                    id="content"
+                                    name="content"
+                                    v-model="form.content"
+                                    placeholder="Pole nieobowiązkowe"
+                                >
+                                </Editor>
+                                <!--
                                 <Textarea
                                     id="content"
                                     name="content"
@@ -132,6 +140,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     placeholder="Pole nieobowiązkowe"
                                 >
                                 </Textarea>
+                                -->
                                 <FieldError v-if="form.errors.content">
                                     {{ form.errors.content }}
                                 </FieldError>

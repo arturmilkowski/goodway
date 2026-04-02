@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ArrowLeftIcon, SendIcon } from 'lucide-vue-next';
+import Editor from '@/components/Editor.vue';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -16,6 +17,8 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { index, create, store } from '@/routes/admin/blog/posts';
 import type { BreadcrumbItem } from '@/types';
+// import { useEditor, EditorContent } from '@tiptap/vue-3';
+// import StarterKit from '@tiptap/starter-kit';
 
 const form = useForm<{
     slug: string | null;
@@ -106,16 +109,16 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 </FieldError>
                             </Field>
                             <Field>
-                                <FieldLabel for="content"
-                                    >Zawartość wpisu</FieldLabel
-                                >
-                                <Textarea
+                                <FieldLabel for="content">
+                                    Zawartość wpisu
+                                </FieldLabel>
+                                <Editor
                                     id="content"
                                     name="content"
                                     v-model="form.content"
                                     placeholder="Pole nieobowiązkowe"
                                 >
-                                </Textarea>
+                                </Editor>
                                 <FieldError v-if="form.errors.content">
                                     {{ form.errors.content }}
                                 </FieldError>
