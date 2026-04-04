@@ -15,7 +15,7 @@
 @if ($post->img)
                 <picture class="px-4 pt-4">
                     <a href="{{ route('blog.posts.show', $post) }}" title="{{ $post->title }}">
-                        <img src="{{ $path }}/{{  $post->img }}" class="w-full" />
+                        <img src="{{ $path }}/{{  $post->img }}" class="w-full" title="{{ $post->title }}" />
                     </a>
                 </picture>
 @endif
@@ -24,7 +24,7 @@
                         {{ $post->intro }}
                     </a>
                 </p>
-                <div class="mb-6">
+                {{-- <div class="mb-6">
                     <a
                         href="{{ route('blog.posts.show', $post) }}"
                         title="{{ $post->title }}"
@@ -32,6 +32,9 @@
                     >
                         Czytaj
                     </a>
+                </div> --}}
+                <div class="mb-6">
+                    <x-link-forward :href="route('blog.posts.show', $post)"  :title="$post->title" text="Czytaj" />
                 </div>
                 <time
                     datetime="{{ $post->created_at->toISOString() }}"
@@ -67,7 +70,7 @@
                         {{ $project->intro }}
                     </a>
                 </p>
-                <div class="mb-6">
+                {{-- <div class="mb-6">
                     <a
                         href="{{ route('projects.show', $project) }}"
                         title="{{ $project->title }}"
@@ -75,6 +78,9 @@
                     >
                         Czytaj
                     </a>
+                </div> --}}
+                <div class="mb-6">
+                    <x-link-forward :href="route('projects.show', $project)"  :title="$project->title" text="Czytaj" />
                 </div>
                 <time
                     datetime="{{ $project->created_at->toISOString() }}"

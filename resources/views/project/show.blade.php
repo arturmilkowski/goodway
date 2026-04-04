@@ -7,9 +7,6 @@
                 {!! $project->content !!}
              </p>
         </article>
-        <div>
-            <a href="{{ route('home') }}" title="Powrót" class="text-xs sm:text-xs md:sm lg:text-base xl:text-lg 2xl:text-xl">
-                Powrót
-            </a>
-        </div>
+
+        <x-link-back :href="route('home')" />
 </x-layout>

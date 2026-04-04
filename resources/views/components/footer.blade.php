@@ -7,10 +7,10 @@
                         &mdash; Root action: <strong>{{ Route::currentRouteAction() }}</strong>
                         @auth
                         &mdash;
-                        Zalogowany: {{ Auth::user()->name }} {{ Auth::user()->profile?->surname }}
+                        <x-heroicon-o-user class="inline-flex items-center w-[1em] h-[1em]" /> {{ Auth::user()->name }} {{ Auth::user()->profile?->surname }}
                         @endauth
-                        &mdash; Laravel: {{ Illuminate\Foundation\Application::VERSION }}
-                        &mdash; PHP: {{ PHP_VERSION }}
+                        &mdash; <x-fab-laravel class="inline-flex items-center w-[1em] h-[1em]" /> {{ Illuminate\Foundation\Application::VERSION }}
+                        &mdash; <x-fab-php class="inline-flex items-center w-[2em] h-[2em]" /> {{ PHP_VERSION }}
                         @endif
             </section>
         </footer>
