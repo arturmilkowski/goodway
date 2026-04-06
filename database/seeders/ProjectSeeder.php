@@ -20,6 +20,7 @@ class ProjectSeeder extends Seeder
             'content' => "Cel Projektu pierwszego",
             'result' => "Rezultat Projektu pierwszego",
             'img' => 'images/project/project1.png',
+            'img1' => 'images/project/project1_.png',
             'site_description' => '',
             'site_keyword' => '',
             'approved' => true,
@@ -35,6 +36,7 @@ class ProjectSeeder extends Seeder
             'content' => "Cel Projektu pierwszego",
             'result' => "Rezultat Projektu drugiego",
             'img' => 'images/project/project2.png',
+            'img1' => 'images/project/project2_.png',
             'site_description' => '',
             'site_keyword' => '',
             'approved' => true,
@@ -51,6 +53,7 @@ class ProjectSeeder extends Seeder
             'result' => "Rezultat Projektu trzeciego.
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
             'img' => 'images/project/project3.png',
+            'img1' => 'images/project/project3_.png',
             'site_description' => '',
             'site_keyword' => '',
             'approved' => true,
@@ -74,6 +77,7 @@ class ProjectSeeder extends Seeder
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
             'img' => 'images/project/project4.png',
+            'img1' => 'images/project/project4_.png',
             'site_description' => '',
             'site_keyword' => '',
             'approved' => true,
