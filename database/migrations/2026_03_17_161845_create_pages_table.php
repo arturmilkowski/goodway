@@ -15,14 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('parent_id')->nullable()->constrained('pages')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->string('slug')->unique();
-            $table->string('title')->unique();
-            $table->string('intro')->nullable();
-            $table->text('content')->nullable();
+
             $table->string('img')->nullable();
             $table->string('img1')->nullable();
-            $table->string('site_description')->nullable();
-            $table->string('site_keyword')->nullable();
+
             $table->boolean('navbar')->default(1)->index();
             $table->boolean('hide')->default(0)->index();
             $table->unsignedSmallInteger('ordinal')->default(1);

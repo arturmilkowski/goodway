@@ -14,18 +14,19 @@ class PageSeeder extends Seeder
     {
         \Illuminate\Support\Facades\DB::table('pages')->insert([
             'user_id' => 1,
-            'slug' => '',
-            'title' => 'Strona główna',
-            'intro' => 'Fundacja Good Way',
-            'content' => "Fundacja Good Way",
-            'site_description' => '',
-            'site_keyword' => '',
+            // 'slug' => '',
+            // 'title' => 'Strona główna',
+            // 'intro' => 'Fundacja Good Way',
+            // 'content' => "Fundacja Good Way",
+            // 'site_description' => '',
+            // 'site_keyword' => '',
             'navbar' => true,
             'hide' => false,
             'ordinal' => 10,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        /*
         \Illuminate\Support\Facades\DB::table('pages')->insert([
             'user_id' => 1,
             'slug' => 'o-fundacji',
@@ -110,6 +111,7 @@ class PageSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        */
         // polityka-prywatnosci
         //  /regulamin
         // /rodo

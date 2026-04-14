@@ -6,13 +6,14 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use App\Models\User;
-use App\Models\Page\Page;
+use App\Models\Page\{Page, PageTranslation};
 
 class PageTest extends TestCase
 {
     use RefreshDatabase;
 
     private Page $page;
+    private PageTranslation $pageTranslation;
     private Page $subpage;
     private User $user;
 
@@ -21,18 +22,22 @@ class PageTest extends TestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-
         $this->page = Page::factory()->create([
             'user_id' => $this->user->id,
-            'title' => 'Strona nadrzędna',
-            'slug' => 'strona-nadrzedna',
+            // 'title' => 'Strona nadrzędna',
+            // 'slug' => 'strona-nadrzedna',
             'parent_id' => null
         ]);
 
+        $this->pageTranslation = PageTranslation::factory()
+            ->for($this->page)
+            ->for($this->user)
+            ->create(['locale' => 'pl']);
+
         $this->subpage = Page::factory()->create([
             'user_id' => $this->user->id,
-            'title' => 'Podstrona',
-            'slug' => 'podstrona',
+            // 'title' => 'Podstrona',
+            // 'slug' => 'podstrona',
             'parent_id' => $this->page->id
         ]);
     }
@@ -51,9 +56,9 @@ class PageTest extends TestCase
 
         $this->assertModelExists($page);
         $this->assertDatabaseHas('pages', [
-            'slug' => $page->slug,
-            'title' => $page->title,
-            'content' => $page->content,
+            // 'slug' => $page->slug,
+            // 'title' => $page->title,
+            // 'content' => $page->content,
         ]);
     }
 
@@ -89,5 +94,15 @@ class PageTest extends TestCase
     public function testPagePathAttribute(): void
     {
         $this->assertIsArray($this->subpage->getPathAttribute());
+    }
+
+    public function testPageHasManyPageTranslations(): void
+    {
+        $this->assertInstanceOf(Collection::class, $this->page->translations);
+    }
+
+    public function testPageHasOnePageTranslations(): void
+    {
+        $this->assertInstanceOf(PageTranslation::class, $this->page->translation);
     }
 }

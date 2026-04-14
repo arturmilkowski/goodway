@@ -4,7 +4,7 @@ namespace App\Models\Page;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany};
+use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasMany, HasOne};
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\User;
@@ -17,14 +17,14 @@ class Page extends Model
     protected $fillable = [
         'parent_id',
         'user_id',
-        'slug',
-        'title',
-        'intro',
-        'content',
+        // 'slug',
+        // 'title',
+        // 'intro',
+        //  'content',
         'img',
         'img1',
-        'site_description',
-        'site_keyword',
+        // 'site_description',
+        //  'site_keyword',
         'navbar',
         'hide',
         'ordinal',
@@ -68,13 +68,11 @@ class Page extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Relacja do strony nadrzędnej (parent)
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    // Relacja do podstron (children)
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id')->orderBy('ordinal');
@@ -110,5 +108,15 @@ class Page extends Model
         }
 
         return $path;
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(PageTranslation::class,);
+    }
+
+    public function translation(): HasOne
+    {
+        return $this->hasOne(PageTranslation::class)->where('locale', app()->getLocale());
     }
 }
