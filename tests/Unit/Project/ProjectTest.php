@@ -26,10 +26,9 @@ class ProjectTest extends TestCase
 
         $this->assertModelExists($project);
         $this->assertDatabaseHas('projects', [
-            'slug' => $project->slug,
-            'title' => $project->title,
-            'content' => $project->content,
-            'result' => $project->result,
+            'user_id' => $user->id,
+            'approved' => $project->approved,
+            'hide' => $project->hide,
         ]);
     }
 }

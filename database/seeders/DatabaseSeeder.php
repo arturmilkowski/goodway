@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PageTranslationSeeder::class,
             PostSeeder::class,
             ProjectSeeder::class,
+            ProjectTranslationSeeder::class,
         ]);
     }
 }

@@ -14,15 +14,8 @@ class Project extends Model
 
     protected $fillable = [
         'user_id',
-        'slug',
-        'title',
-        'intro',
-        'content',
-        'result',
         'img',
         'img1',
-        'site_description',
-        'site_keyword',
         'approved',
         'hide',
     ];

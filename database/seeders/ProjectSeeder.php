@@ -14,20 +14,17 @@ class ProjectSeeder extends Seeder
     {
         \Illuminate\Support\Facades\DB::table('projects')->insert([
             'user_id' => 1,
-            'slug' => 'projekt-pierwszy',
-            'title' => 'Projekt pierwszy',
-            'intro' => 'Wstęp do Projekt pierwszego',
-            'content' => "Cel Projektu pierwszego",
-            'result' => "Rezultat Projektu pierwszego",
+
             'img' => 'images/project/project1.png',
             'img1' => 'images/project/project1_.png',
-            'site_description' => '',
-            'site_keyword' => '',
+
             'approved' => true,
             'hide' => false,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        /*
         \Illuminate\Support\Facades\DB::table('projects')->insert([
             'user_id' => 1,
             'slug' => 'projekt-drugi',
@@ -85,5 +82,6 @@ class ProjectSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        */
     }
 }
