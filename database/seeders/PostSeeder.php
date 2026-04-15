@@ -14,20 +14,23 @@ class PostSeeder extends Seeder
     {
         \Illuminate\Support\Facades\DB::table('posts')->insert([
             'user_id' => 1,
+            /*
             'slug' => 'wpis-pierwszy',
             'title' => 'Wpis pierwszy',
             'intro' => "Wstęp  do pierwszego  wpisu. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
             'content' => "Zawartość pierwszego  wpisu. <br>
                             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+            */
             'img' => 'images/blog/post4.png',
             'img1' => 'images/blog/post4_.png',
-            'site_description' => '',
-            'site_keyword' => '',
+            // 'site_description' => '',
+            // 'site_keyword' => '',
             'approved' => '1',
             'published' => '1',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        /*
         \Illuminate\Support\Facades\DB::table('posts')->insert([
             'user_id' => 1,
             'slug' => 'wpis-drugi',
@@ -79,5 +82,6 @@ class PostSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        */
     }
 }

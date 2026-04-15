@@ -5,7 +5,7 @@ namespace Tests\Unit\Page;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
-use App\Models\Page\{Page,  PageTranslation};
+use App\Models\Page\{Page, PageTranslation};
 
 class PageTranslationTest extends TestCase
 {
@@ -34,5 +34,23 @@ class PageTranslationTest extends TestCase
             'intro' => $pageTranslation->intro,
             'content' => $pageTranslation->content,
         ]);
+    }
+
+    public function testPageTranslationBelongsToUser(): void
+    {
+        $user = User::factory()->create();
+        $page = Page::factory()->for($user)->create();
+        $pageTranslation = PageTranslation::factory()->for($user)->for($page)->create();
+
+        $this->assertInstanceOf(User::class, $pageTranslation->user);
+    }
+
+    public function testPageTranslationBelongsToPage(): void
+    {
+        $user = User::factory()->create();
+        $page = Page::factory()->for($user)->create();
+        $pageTranslation = PageTranslation::factory()->for($user)->for($page)->create();
+
+        $this->assertInstanceOf(Page::class, $pageTranslation->page);
     }
 }
