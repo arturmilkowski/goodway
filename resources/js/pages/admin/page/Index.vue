@@ -42,7 +42,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <AlertTitle>{{ page.flash.message }}</AlertTitle>
             </Alert>
             <div
-                class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border"
+                class="relative min-h-screen flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border"
             >
                 <div class="py-3 pl-2">
                     <Button variant="outline" as-child>
@@ -58,7 +58,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <TableHead class="w-10">ID</TableHead>
                             <TableHead class="w-10">Rodzic</TableHead>
                             <TableHead>Grafika</TableHead>
-                            <TableHead>Tytuł</TableHead>
+                            <!-- <TableHead>Tytuł</TableHead> -->
                         </TableRow>
                     </TableHeader>
                     <TableBody>

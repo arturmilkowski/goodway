@@ -15,6 +15,7 @@ class ProjectTranslationSeeder extends Seeder
         \Illuminate\Support\Facades\DB::table('project_translations')->insert([
             'project_id' => 1,
             'user_id' => 1,
+            'locale' => 'pl',
             'slug' => 'projekt-pierwszy',
             'title' => 'Projekt pierwszy',
             'intro' => 'Wstęp do Projekt pierwszego',

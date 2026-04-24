@@ -13,8 +13,8 @@ class PageTranslationSeeder extends Seeder
     public function run(): void
     {
         \Illuminate\Support\Facades\DB::table('page_translations')->insert([
-            // 'user_id' => 1,
             'page_id' => 1,
+            'user_id' => 1,
             'locale' => 'pl',
             'slug' => '',
             'title' => 'Strona główna',

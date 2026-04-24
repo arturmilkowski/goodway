@@ -13,8 +13,8 @@ class PostTranslationSeeder extends Seeder
     public function run(): void
     {
         \Illuminate\Support\Facades\DB::table('post_translations')->insert([
-            'user_id' => 1,
             'post_id' => 1,
+            'user_id' => 1,
             'locale' => 'pl',
             'slug' => 'pierwszy-wpis',
             'title' => 'Pierwszy wpis',
