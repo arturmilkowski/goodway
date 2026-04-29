@@ -18,8 +18,18 @@ class PageController // extends Controller
 
     public function index(): Response
     {
-        $pages = Page::latest()->get();
-
+        // $pages = Page::latest()->get();
+        /*
+        $pages = Page::with([
+            'translations' => fn($q) =>
+            $q->where('locale', 'pl')
+                ->select('page_id', 'locale', 'title', 'slug')
+        ])->latest()->get();
+        */
+        // dd($pages);
+        $pages = Page::with('translation')->latest()->get();
+        // dd($pages);
+        // dd($pages->first()->translation);
         return Inertia::render('admin/page/Index', [
             'pages' => $pages,
             'path' => asset('storage')
@@ -74,6 +84,7 @@ class PageController // extends Controller
         }]);
         */
 
+        /*
         $page->load(['parent', 'children' => function ($query) {
             $query->where('hide', false)
                 ->where('navbar', true)
@@ -83,6 +94,21 @@ class PageController // extends Controller
         return Inertia::render('admin/page/Show', [
             'page' => $page,
             'path' => asset('storage')
+        ]);
+        */
+
+        $page->load([
+            'parent',
+            'children' => fn($q) => $q->where('hide', false)
+                ->where('navbar', true)
+                ->orderBy('ordinal'),
+            'translations',
+        ]);
+
+        return Inertia::render('admin/page/Show', [
+            'page'    => $page,
+            'locales' => config('settings.locales', ['pl', 'en']),
+            'path'    => asset('storage'),
         ]);
     }
 

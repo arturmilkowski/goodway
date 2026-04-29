@@ -6,19 +6,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Page\PageController;
 
 use App\Http\Controllers\Admin\Page\{PageController as AdminPageController, ImgController as AdminPageImgController};
+use App\Http\Controllers\Admin\Page\Translation\TranslationController as AdminPageTranslationController;
 use App\Http\Controllers\Admin\Blog\Post\{PostController as AdminPostController, ImgController as AdminPostImgController};
 use App\Http\Controllers\Admin\Project\{ProjectController as AdminProjectController, ImgController as AdminProjectImgController};
 use App\Http\Controllers\Blog\Post\PostController;
 use App\Http\Controllers\Project\ProjectController;
 
 
-Route::get('/', [PageController::class, 'index'])->name('home'); // pages.index
-
-//  Route::inertia('/', 'Welcome', ['canRegister' => Features::enabled(Features::registration()),])->name('home');
-
+Route::get('/', [PageController::class, 'index'])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+
+    Route::resource('admin/pages/translations', AdminPageTranslationController::class)->names('admin.pages.translations');
 
     Route::resource('admin/pages', AdminPageController::class)->names('admin.pages');
     Route::delete('admin/pages/images/{page}', AdminPageImgController::class)->name('admin.pages.images.destroy');

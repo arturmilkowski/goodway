@@ -26,6 +26,14 @@ class PageSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        \Illuminate\Support\Facades\DB::table('pages')->insert([
+            'user_id' => 1,
+            'navbar' => true,
+            'hide' => false,
+            'ordinal' => 20,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         /*
         \Illuminate\Support\Facades\DB::table('pages')->insert([
             'user_id' => 1,

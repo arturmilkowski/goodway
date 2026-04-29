@@ -24,8 +24,6 @@ class PageTest extends TestCase
         $this->user = User::factory()->create();
         $this->page = Page::factory()->create([
             'user_id' => $this->user->id,
-            // 'title' => 'Strona nadrzędna',
-            // 'slug' => 'strona-nadrzedna',
             'parent_id' => null
         ]);
 
@@ -36,8 +34,6 @@ class PageTest extends TestCase
 
         $this->subpage = Page::factory()->create([
             'user_id' => $this->user->id,
-            // 'title' => 'Podstrona',
-            // 'slug' => 'podstrona',
             'parent_id' => $this->page->id
         ]);
     }

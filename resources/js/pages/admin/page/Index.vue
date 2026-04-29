@@ -56,24 +56,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <TableHeader>
                         <TableRow>
                             <TableHead class="w-10">ID</TableHead>
-                            <TableHead class="w-10">Rodzic</TableHead>
                             <TableHead>Grafika</TableHead>
-                            <!-- <TableHead>Tytuł</TableHead> -->
+                            <TableHead>Tytuł</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         <TableRow v-for="page in pages" :key="page.id">
                             <TableCell class="font-medium">
                                 {{ page.id }}
-                            </TableCell>
-                            <TableCell>
-                                <pre>
-                                    {{ page.parent?.title }}
-                                    __{{ page.isSubpage }}__  {{
-                                        page.children
-                                    }}
-                                </pre>
-                                <!-- <template v-else>&mdash;</template> -->
                             </TableCell>
                             <TableCell class="w-[150px]">
                                 <template v-if="page.img">
@@ -87,7 +77,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </TableCell>
                             <TableCell>
                                 <Link :href="show(page.id)">
-                                    {{ page.title }}
+                                    {{ page.translation.title }}
                                 </Link>
                             </TableCell>
                         </TableRow>

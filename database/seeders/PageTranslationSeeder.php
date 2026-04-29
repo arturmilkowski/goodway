@@ -25,5 +25,18 @@ class PageTranslationSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        \Illuminate\Support\Facades\DB::table('page_translations')->insert([
+            'page_id' => 2,
+            'user_id' => 1,
+            'locale' => 'pl',
+            'slug' => 'o-nas',
+            'title' => 'O nas',
+            'intro' => 'O fundacji Good Way',
+            'content' => "O Fundacji Good Way",
+            'site_description' => '',
+            'site_keyword' => '',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }
