@@ -93,7 +93,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 <template v-else>&mdash;</template>
                             </TableCell>
                         </TableRow>
-                        <TableRow>
+
+                        <!-- <TableRow>
                             <TableCell>Wstęp</TableCell>
                             <TableCell>{{ page?.intro }}</TableCell>
                         </TableRow>
@@ -110,7 +111,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <TableRow>
                             <TableCell>Słowa kluczowe</TableCell>
                             <TableCell>{{ page?.site_keyword }}</TableCell>
-                        </TableRow>
+                        </TableRow> -->
+
                         <TableRow>
                             <TableCell>Umieść w głównym menu</TableCell>
                             <TableCell>{{ page?.navbar }}</TableCell>
