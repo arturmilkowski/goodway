@@ -44,11 +44,15 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </TableRow>
                         <TableRow>
                             <TableCell>Tytuł</TableCell>
-                            <TableCell>{{ page?.title }}</TableCell>
+                            <TableCell>
+                                {{ page?.translations[0].title }}
+                            </TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Przyjazny adres</TableCell>
-                            <TableCell>{{ page?.slug }}</TableCell>
+                            <TableCell>
+                                {{ page?.translations[0].slug }}
+                            </TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Strona nadrzędna</TableCell>
@@ -67,7 +71,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                         v-for="site in page?.children"
                                         :key="site.id"
                                     >
-                                        {{ site.title }}
+                                        <pre>{{ site }}</pre>
                                     </li>
                                 </ul>
                                 <template v-else>&mdash;</template>

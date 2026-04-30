@@ -19,25 +19,20 @@ class PageController // extends Controller
 
     public function index(): Response
     {
-        // $pages = Page::latest()->get();
-        $pages = Page::with(['translations' => fn($q) => $q->where('locale', 'pl')])->latest()->get();
-        // dump($pages[0]->translations[0]->title);
+        $pages = Page::with([
+            'translations' => fn($q) =>
+            $q->where('locale', 'pl')
+                ->select('page_id', 'locale', 'title', 'slug')
+        ])->latest()->get();
+
         return Inertia::render('admin/page/Index', [
             'pages' => $pages,
-            'path' => asset('storage')
+            'path'  => asset('storage'),
         ]);
     }
 
     public function create(): Response
     {
-        /*
-        $pages = Page::latest()->get();
-
-        return Inertia::render('admin/page/Create', [
-            'pages' => $pages,
-        ]);
-        */
-
         $pages = Page::with([
             'translations' => fn($q) =>
             $q->where('locale', 'pl')
@@ -52,34 +47,8 @@ class PageController // extends Controller
 
     public function store(StorePageRequest $request): RedirectResponse
     {
-        /*
-        $validated = $request->validated();
-
-        $file = $request->file('imgFile');
-        if ($file) {
-            $path = $request->file('imgFile')->storePublicly($this->pageImgPath, 'public');
-            $validated['img'] = $path;
-        }
-
-        $file1 = $request->file('imgFile1');
-        if ($file1) {
-            $path = $request->file('imgFile1')->storePublicly($this->pageImgPath, 'public');
-            $validated['img1'] = $path;
-        }
-
-        Page::create($validated);
-
-        Inertia::flash([
-            'message' => 'Dodano',
-        ]);
-
-        return to_route('admin.pages.index');
-        */
-
         $validated = $request->validated();
         $validated['user_id'] =  Auth::id();
-
-        // --- Obsługa zdjęć (bez zmian) ---
 
         $file = $request->file('imgFile');
         if ($file) {
@@ -93,13 +62,9 @@ class PageController // extends Controller
             $validated['img1'] = $path1;
         }
 
-        // --- Zapis głównego rekordu (bez tłumaczeń) ---
-
         $page = Page::create(
             collect($validated)->except('translations')->toArray()
         );
-
-        // --- Zapis tłumaczeń ---
 
         foreach ($validated['translations'] as $locale => $translation) {
             if (empty($translation['title']) || trim($translation['title']) === '') {
@@ -127,27 +92,18 @@ class PageController // extends Controller
 
     public function show(Page $page): Response
     {
-        /*
-        $page->load(['children' => function ($query) {
-            $query->orderBy('ordinal');
-        }]);
-        */
-
-        /*
-        $page->load(['parent', 'children' => function ($query) {
-            $query->orderBy('ordinal');
-        }]);
-        */
-
-        $page->load(['parent', 'children' => function ($query) {
-            $query->where('hide', false)
+        $page->load([
+            'translations',
+            'parent',
+            'children' => fn($q) => $q->where('hide', false)
                 ->where('navbar', true)
-                ->orderBy('ordinal');
-        }]);
+                ->orderBy('ordinal'),
+        ]);
 
         return Inertia::render('admin/page/Show', [
-            'page' => $page,
-            'path' => asset('storage')
+            'page'    => $page,
+            'locales' => config('settings.locales', ['pl', 'en']),
+            'path'    => asset('storage'),
         ]);
     }
 
@@ -155,7 +111,6 @@ class PageController // extends Controller
     {
         $page->load(['translations']);
 
-        // $pages = Page::latest()->get();
         $pages = Page::with([
             'translations' => fn($q) =>
             $q->where('locale', 'pl')
@@ -172,36 +127,6 @@ class PageController // extends Controller
 
     public function update(StorePageRequest $request, Page $page): RedirectResponse
     {
-        /*
-        $validated = $request->validated();
-
-        $file = $request->file('imgFile');
-        if ($file) {
-            if ($page->img) {
-                Storage::disk('public')->delete($page->img);
-            }
-            $path = $request->file('imgFile')->storePublicly($this->pageImgPath, 'public');
-            $validated['img'] = $path;
-        }
-
-        $file1 = $request->file('imgFile1');
-        if ($file1) {
-            if ($page->img1) {
-                Storage::disk('public')->delete($page->img1);
-            }
-            $path1 = $request->file('imgFile1')->storePublicly($this->pageImgPath, 'public');
-            $validated['img1'] = $path1;
-        }
-
-        $page->update($validated);
-
-        Inertia::flash([
-            'message' => 'Zmieniono',
-        ]);
-
-        return to_route('admin.pages.show', $page);
-        */
-
         $validated = $request->validated();
 
         $file = $request->file('imgFile');
@@ -225,7 +150,6 @@ class PageController // extends Controller
         $page->update(collect($validated)->except('translations')->toArray());
 
         foreach ($validated['translations'] as $locale => $translation) {
-            // Pomiń jeśli tytuł pusty lub null
             if (empty($translation['title']) || trim($translation['title']) === '') {
                 continue;
             }
