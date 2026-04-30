@@ -3,8 +3,8 @@ import { Head, Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import { Plus } from 'lucide-vue-next';
 import { CheckCircle2Icon } from 'lucide-vue-next';
+// import Editor from '@/components/Editor.vue';
 import { Alert, AlertTitle } from '@/components/ui/alert';
-import Editor from '@/components/Editor.vue';
 import { Button } from '@/components/ui/button';
 import {
     Table,
@@ -56,6 +56,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <TableHeader>
                         <TableRow>
                             <TableHead class="w-10">ID</TableHead>
+                            <!-- <TableHead class="w-10">Rodzic</TableHead> -->
                             <TableHead>Grafika</TableHead>
                             <TableHead>Tytuł</TableHead>
                         </TableRow>
@@ -77,7 +78,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </TableCell>
                             <TableCell>
                                 <Link :href="show(page.id)">
-                                    {{ page.translation.title }}
+                                    {{ page.translations[0].title }}
                                 </Link>
                             </TableCell>
                         </TableRow>

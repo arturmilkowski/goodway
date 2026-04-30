@@ -10,6 +10,7 @@ use Inertia\Response;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Page\Page;
 use App\Http\Requests\Admin\Page\StorePageRequest;
+use Illuminate\Support\Facades\Auth;
 
 
 class PageController // extends Controller
@@ -18,50 +19,69 @@ class PageController // extends Controller
 
     public function index(): Response
     {
-        // $pages = Page::latest()->get();
-        /*
         $pages = Page::with([
             'translations' => fn($q) =>
             $q->where('locale', 'pl')
                 ->select('page_id', 'locale', 'title', 'slug')
         ])->latest()->get();
-        */
-        // dd($pages);
-        $pages = Page::with('translation')->latest()->get();
-        // dd($pages);
-        // dd($pages->first()->translation);
+
         return Inertia::render('admin/page/Index', [
             'pages' => $pages,
-            'path' => asset('storage')
+            'path'  => asset('storage'),
         ]);
     }
 
     public function create(): Response
     {
-        $pages = Page::latest()->get();
+        $pages = Page::with([
+            'translations' => fn($q) =>
+            $q->where('locale', 'pl')
+                ->select('page_id', 'locale', 'title', 'slug')
+        ])->latest()->get();
 
         return Inertia::render('admin/page/Create', [
-            'pages' => $pages,
+            'pages'   => $pages,
+            'locales' => config('settings.locales', ['pl', 'en']),
         ]);
     }
 
     public function store(StorePageRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['user_id'] =  Auth::id();
 
         $file = $request->file('imgFile');
         if ($file) {
-            $path = $request->file('imgFile')->storePublicly($this->pageImgPath, 'public');
+            $path = $file->storePublicly($this->pageImgPath, 'public');
             $validated['img'] = $path;
         }
 
         $file1 = $request->file('imgFile1');
         if ($file1) {
-            $path = $request->file('imgFile1')->storePublicly($this->pageImgPath, 'public');
-            $validated['img1'] = $path;
+            $path1 = $file1->storePublicly($this->pageImgPath, 'public');
+            $validated['img1'] = $path1;
         }
 
-        Page::create($validated);
+        $page = Page::create(
+            collect($validated)->except('translations')->toArray()
+        );
+
+        foreach ($validated['translations'] as $locale => $translation) {
+            if (empty($translation['title']) || trim($translation['title']) === '') {
+                continue;
+            }
+
+            $page->translations()->create([
+                'locale'           => $locale,
+                'user_id'          => Auth::id(),
+                'slug'             => $translation['slug'],
+                'title'            => $translation['title'],
+                'intro'            => $translation['intro'] ?? null,
+                'content'          => $translation['content'] ?? null,
+                'site_description' => $translation['site_description'] ?? null,
+                'site_keyword'     => $translation['site_keyword'] ?? null,
+            ]);
+        }
 
         Inertia::flash([
             'message' => 'Dodano',
@@ -72,37 +92,12 @@ class PageController // extends Controller
 
     public function show(Page $page): Response
     {
-        /*
-        $page->load(['children' => function ($query) {
-            $query->orderBy('ordinal');
-        }]);
-        */
-
-        /*
-        $page->load(['parent', 'children' => function ($query) {
-            $query->orderBy('ordinal');
-        }]);
-        */
-
-        /*
-        $page->load(['parent', 'children' => function ($query) {
-            $query->where('hide', false)
-                ->where('navbar', true)
-                ->orderBy('ordinal');
-        }]);
-
-        return Inertia::render('admin/page/Show', [
-            'page' => $page,
-            'path' => asset('storage')
-        ]);
-        */
-
         $page->load([
+            'translations',
             'parent',
             'children' => fn($q) => $q->where('hide', false)
                 ->where('navbar', true)
                 ->orderBy('ordinal'),
-            'translations',
         ]);
 
         return Inertia::render('admin/page/Show', [
@@ -114,11 +109,18 @@ class PageController // extends Controller
 
     public function edit(Page $page): Response
     {
-        $pages = Page::latest()->get();
+        $page->load(['translations']);
+
+        $pages = Page::with([
+            'translations' => fn($q) =>
+            $q->where('locale', 'pl')
+                ->select('page_id', 'locale', 'title', 'slug')
+        ])->latest()->get();
 
         return Inertia::render('admin/page/Edit', [
             'page' => $page,
             'pages' => $pages,
+            'locales' => ['pl', 'en'],
             'path' => asset('storage')
         ]);
     }
@@ -132,7 +134,7 @@ class PageController // extends Controller
             if ($page->img) {
                 Storage::disk('public')->delete($page->img);
             }
-            $path = $request->file('imgFile')->storePublicly($this->pageImgPath, 'public');
+            $path = $file->storePublicly($this->pageImgPath, 'public');
             $validated['img'] = $path;
         }
 
@@ -141,15 +143,32 @@ class PageController // extends Controller
             if ($page->img1) {
                 Storage::disk('public')->delete($page->img1);
             }
-            $path1 = $request->file('imgFile1')->storePublicly($this->pageImgPath, 'public');
+            $path1 = $file1->storePublicly($this->pageImgPath, 'public');
             $validated['img1'] = $path1;
         }
 
-        $page->update($validated);
+        $page->update(collect($validated)->except('translations')->toArray());
 
-        Inertia::flash([
-            'message' => 'Zmieniono',
-        ]);
+        foreach ($validated['translations'] as $locale => $translation) {
+            if (empty($translation['title']) || trim($translation['title']) === '') {
+                continue;
+            }
+
+            $page->translations()->updateOrCreate(
+                ['locale' => $locale],
+                [
+                    'user_id'          => Auth::id(),
+                    'slug'             => $translation['slug'],
+                    'title'            => $translation['title'],
+                    'intro'            => $translation['intro'] ?? null,
+                    'content'          => $translation['content'] ?? null,
+                    'site_description' => $translation['site_description'] ?? null,
+                    'site_keyword'     => $translation['site_keyword'] ?? null,
+                ]
+            );
+        }
+
+        Inertia::flash(['message' => 'Zmieniono']);
 
         return to_route('admin.pages.show', $page);
     }

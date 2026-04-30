@@ -98,6 +98,18 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <TableCell>{{ page?.id }}</TableCell>
                         </TableRow>
                         <TableRow>
+                            <TableCell>Tytuł</TableCell>
+                            <TableCell>
+                                {{ page?.translations[0].title }}
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Przyjazny adres</TableCell>
+                            <TableCell>
+                                {{ page?.translations[0].slug }}
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
                             <TableCell>Strona nadrzędna</TableCell>
                             <TableCell>
                                 <template v-if="page?.parent">
@@ -118,11 +130,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                                         v-for="child in page.children"
                                         :key="child.id"
                                     >
-                                        {{
-                                            child.translations?.find(
-                                                (t) => t.locale === 'pl',
-                                            )?.title ?? '—'
-                                        }}
+                                        <pre>{{ site }}</pre>
                                     </li>
                                 </ul>
                                 <template v-else>&mdash;</template>
@@ -148,6 +156,26 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 <template v-else>&mdash;</template>
                             </TableCell>
                         </TableRow>
+
+                        <!-- <TableRow>
+                            <TableCell>Wstęp</TableCell>
+                            <TableCell>{{ page?.intro }}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Zawartość</TableCell>
+                            <TableCell>
+                                <span v-html="page?.content"></span>
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Opis strony</TableCell>
+                            <TableCell>{{ page?.site_description }}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Słowa kluczowe</TableCell>
+                            <TableCell>{{ page?.site_keyword }}</TableCell>
+                        </TableRow> -->
+
                         <TableRow>
                             <TableCell>Umieść w głównym menu</TableCell>
                             <TableCell>{{ page?.navbar }}</TableCell>
