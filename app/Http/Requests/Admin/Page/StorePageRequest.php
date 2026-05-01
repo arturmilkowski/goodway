@@ -79,7 +79,7 @@ class StorePageRequest extends FormRequest
             ? $this->page->translations->keyBy('locale')
             : collect();
 
-        $locales = config('app.locales', ['pl', 'en']);
+        $locales = config('settings.locales', ['pl', 'en']);
 
         $rules = [
             // --- Pola głównej tabeli ---
@@ -170,7 +170,7 @@ class StorePageRequest extends FormRequest
     public function attributes(): array
     {
         $attributes = [];
-        $locales = config('app.locales', ['pl', 'en']);
+        $locales = config('settings.locales', ['pl', 'en']);
 
         $localeNames = [
             'pl' => 'PL',

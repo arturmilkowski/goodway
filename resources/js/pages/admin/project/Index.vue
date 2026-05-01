@@ -77,7 +77,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </TableCell>
                             <TableCell>
                                 <Link :href="show(project.id)">
-                                    {{ project.title }}
+                                    {{ project.translations[0].title }}
                                 </Link>
                             </TableCell>
                         </TableRow>

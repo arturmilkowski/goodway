@@ -2,94 +2,106 @@
 
 namespace App\Http\Controllers\Admin\Project;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Project\Project;
 use App\Http\Requests\Admin\Project\StoreProjectRequest;
 
-class ProjectController // extends Controller
+class ProjectController
 {
     private string $projectImgPath = 'images/project';
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): Response
     {
-        $projects = Project::latest()->get();
+        $projects = Project::with([
+            'translations' => fn($q) =>
+            $q->where('locale', 'pl')
+                ->select('project_id', 'locale', 'title', 'slug')
+        ])->latest()->get();
 
         return Inertia::render('admin/project/Index', [
             'projects' => $projects,
-            'path' => asset('storage')
+            'path'     => asset('storage'),
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): Response
     {
-        return Inertia::render('admin/project/Create');
+        return Inertia::render('admin/project/Create', [
+            'locales' => config('settings.locales', ['pl', 'en']),
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreProjectRequest $request)
+    public function store(StoreProjectRequest $request): RedirectResponse
     {
         $validated = $request->validated();
 
         $file = $request->file('imgFile');
         if ($file) {
-            $path = $request->file('imgFile')->storePublicly($this->projectImgPath, 'public');
+            $path = $file->storePublicly($this->projectImgPath, 'public');
             $validated['img'] = $path;
         }
 
         $file1 = $request->file('imgFile1');
         if ($file1) {
-            $path = $request->file('imgFile1')->storePublicly($this->projectImgPath, 'public');
-            $validated['img1'] = $path;
+            $path1 = $file1->storePublicly($this->projectImgPath, 'public');
+            $validated['img1'] = $path1;
         }
 
-        Project::create($validated);
-
-        Inertia::flash([
-            'message' => 'Dodano',
+        $project = Project::create([
+            ...collect($validated)->except('translations')->toArray(),
+            'user_id' => Auth::id(),
         ]);
+
+        foreach ($validated['translations'] as $locale => $translation) {
+            if (empty($translation['title']) || trim($translation['title']) === '') {
+                continue;
+            }
+
+            $project->translations()->create([
+                'locale'           => $locale,
+                'user_id'          => Auth::id(),
+                'slug'             => $translation['slug'],
+                'title'            => $translation['title'],
+                'intro'            => $translation['intro'] ?? null,
+                'content'          => $translation['content'] ?? null,
+                'result'           => $translation['result'] ?? null,
+                'site_description' => $translation['site_description'] ?? null,
+                'site_keyword'     => $translation['site_keyword'] ?? null,
+            ]);
+        }
+
+        Inertia::flash(['message' => 'Dodano']);
 
         return to_route('admin.projects.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Project $project)
+    public function show(Project $project): Response
     {
+        $project->load(['translations']);
+
         return Inertia::render('admin/project/Show', [
             'project' => $project,
-            'path' => asset('storage')
+            'locales' => config('settings.locales', ['pl', 'en']),
+            'path'    => asset('storage'),
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Project $project)
+    public function edit(Project $project): Response
     {
+        $project->load(['translations']);
+
         return Inertia::render('admin/project/Edit', [
             'project' => $project,
-            'path' => asset('storage')
+            'locales' => config('settings.locales', ['pl', 'en']),
+            'path'    => asset('storage'),
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(StoreProjectRequest $request, Project $project)
+    public function update(StoreProjectRequest $request, Project $project): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -98,7 +110,7 @@ class ProjectController // extends Controller
             if ($project->img) {
                 Storage::disk('public')->delete($project->img);
             }
-            $path = $request->file('imgFile')->storePublicly($this->projectImgPath, 'public');
+            $path = $file->storePublicly($this->projectImgPath, 'public');
             $validated['img'] = $path;
         }
 
@@ -107,23 +119,38 @@ class ProjectController // extends Controller
             if ($project->img1) {
                 Storage::disk('public')->delete($project->img1);
             }
-            $path1 = $request->file('imgFile1')->storePublicly($this->projectImgPath, 'public');
+            $path1 = $file1->storePublicly($this->projectImgPath, 'public');
             $validated['img1'] = $path1;
         }
 
-        $project->update($validated);
+        $project->update(collect($validated)->except('translations')->toArray());
 
-        Inertia::flash([
-            'message' => 'Zmieniono',
-        ]);
+        foreach ($validated['translations'] as $locale => $translation) {
+            if (empty($translation['title']) || trim($translation['title']) === '') {
+                continue;
+            }
+
+            $project->translations()->updateOrCreate(
+                ['locale' => $locale],
+                [
+                    'user_id'          => Auth::id(),
+                    'slug'             => $translation['slug'],
+                    'title'            => $translation['title'],
+                    'intro'            => $translation['intro'] ?? null,
+                    'content'          => $translation['content'] ?? null,
+                    'result'           => $translation['result'] ?? null,
+                    'site_description' => $translation['site_description'] ?? null,
+                    'site_keyword'     => $translation['site_keyword'] ?? null,
+                ]
+            );
+        }
+
+        Inertia::flash(['message' => 'Zmieniono']);
 
         return to_route('admin.projects.show', $project);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Project  $project)
+    public function destroy(Project $project): RedirectResponse
     {
         if ($project->img) {
             Storage::disk('public')->delete($project->img);
@@ -134,9 +161,7 @@ class ProjectController // extends Controller
 
         $project->delete();
 
-        Inertia::flash([
-            'message' => 'Usunięto',
-        ]);
+        Inertia::flash(['message' => 'Usunięto']);
 
         return to_route('admin.projects.index');
     }

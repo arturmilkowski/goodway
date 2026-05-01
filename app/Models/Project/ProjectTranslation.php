@@ -15,6 +15,7 @@ class ProjectTranslation extends Model
     protected $fillable = [
         'project_id',
         'user_id',
+        'locale',       // ← było brak
         'slug',
         'title',
         'intro',

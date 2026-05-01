@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import { ArrowLeftIcon, SendIcon } from 'lucide-vue-next';
 import Editor from '@/components/Editor.vue';
 import { Button } from '@/components/ui/button';
@@ -18,35 +19,68 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { index, create, store } from '@/routes/admin/projects';
 import type { BreadcrumbItem } from '@/types';
 
-const form = useForm<{
-    slug: string | null;
-    title: string | number | undefined;
-    intro: string | number | undefined;
+interface Translation {
+    locale: string;
+    slug: string;
+    title: string;
+    intro: string;
     content: string;
     result: string;
+    site_description: string;
+    site_keyword: string;
+}
+
+const props = defineProps<{
+    locales: string[];
+}>();
+
+const activeLocale = ref(props.locales[0] ?? 'pl');
+
+const localeLabels: Record<string, string> = {
+    pl: '🇵🇱 PL',
+    en: '🇬🇧 EN',
+    de: '🇩🇪 DE',
+};
+
+const emptyTranslations = Object.fromEntries(
+    props.locales.map((locale) => [
+        locale,
+        {
+            locale,
+            slug: '',
+            title: '',
+            intro: '',
+            content: '',
+            result: '',
+            site_description: '',
+            site_keyword: '',
+        },
+    ]),
+) as Record<string, Translation>;
+
+const form = useForm<{
     img: string | null;
     img1: string | null;
     imgFile: File | null;
     imgFile1: File | null;
-    site_description: string;
-    site_keyword: string;
     approved: boolean;
     hide: boolean;
+    translations: Record<string, Translation>;
 }>({
-    slug: '',
-    title: '',
-    intro: '',
-    content: '',
-    result: '',
-    img: '',
-    img1: '',
+    img: null,
+    img1: null,
     imgFile: null,
     imgFile1: null,
-    site_description: '',
-    site_keyword: '',
     approved: true,
     hide: false,
+    translations: emptyTranslations,
 });
+
+function translationError(locale: string, field: string): string | undefined {
+    return (form.errors as Record<string, string>)[
+        `translations.${locale}.${field}`
+    ];
+}
 
 function handleFileInput(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -58,10 +92,7 @@ function handleFileInput1(event: Event) {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Tworzenie projektu',
-        href: create().url,
-    },
+    { title: 'Tworzenie projektu', href: create().url },
 ];
 </script>
 
@@ -76,73 +107,283 @@ const breadcrumbs: BreadcrumbItem[] = [
                 class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 p-4 md:min-h-min dark:border-sidebar-border"
             >
                 <form @submit.prevent="form.post(store().url)">
-                    <pre>{{ form.errors }}</pre>
                     <FieldSet>
                         <FieldGroup>
-                            <Field>
-                                <FieldLabel for="title">
-                                    Tytuł (nazwa)
-                                </FieldLabel>
-                                <Input
-                                    id="title"
-                                    name="title"
-                                    type="text"
-                                    v-model="form.title"
-                                    placeholder="Pole obowiązkowe"
-                                />
-                                <FieldError v-if="form.errors.title">
-                                    {{ form.errors.title }}
-                                </FieldError>
-                            </Field>
-                            <Field>
-                                <FieldLabel for="intro">
-                                    Wstęp do projektu
-                                </FieldLabel>
-                                <Textarea
-                                    id="intro"
-                                    name="intro"
-                                    v-model="form.intro"
-                                    placeholder="Pole nieobowiązkowe"
+                            <!-- Zakładki języków -->
+                            <div class="mt-4">
+                                <div
+                                    class="mb-4 flex gap-2 border-b border-sidebar-border/70 pb-2"
                                 >
-                                </Textarea>
-                                <FieldError v-if="form.errors.intro">
-                                    {{ form.errors.intro }}
-                                </FieldError>
-                            </Field>
-                            <Field>
-                                <FieldLabel for="content">Cel</FieldLabel>
-                                <Editor
-                                    id="content"
-                                    name="content"
-                                    v-model="form.content"
-                                    placeholder="Pole nieobowiązkowe"
+                                    <button
+                                        v-for="locale in props.locales"
+                                        :key="locale"
+                                        type="button"
+                                        @click="activeLocale = locale"
+                                        :class="[
+                                            'rounded-t px-4 py-1.5 text-sm font-medium transition-colors',
+                                            activeLocale === locale
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'bg-muted text-muted-foreground hover:bg-muted/80',
+                                        ]"
+                                    >
+                                        {{
+                                            localeLabels[locale] ??
+                                            locale.toUpperCase()
+                                        }}
+                                        <span
+                                            :class="[
+                                                'ml-1 inline-block h-2 w-2 rounded-full',
+                                                form.translations[locale].title
+                                                    ? 'bg-green-500'
+                                                    : 'bg-gray-300',
+                                            ]"
+                                        />
+                                    </button>
+                                </div>
+
+                                <template
+                                    v-for="locale in props.locales"
+                                    :key="locale"
                                 >
-                                </Editor>
-                                <!--
-                                <Textarea
-                                    id="content"
-                                    name="content"
-                                    v-model="form.content"
-                                    placeholder="Pole nieobowiązkowe"
-                                >
-                                </Textarea>
-                                -->
-                                <FieldError v-if="form.errors.content">
-                                    {{ form.errors.content }}
-                                </FieldError>
-                            </Field>
-                            <Field>
+                                    <div v-show="activeLocale === locale">
+                                        <Field>
+                                            <FieldLabel
+                                                :for="`title-${locale}`"
+                                            >
+                                                Tytuł projektu
+                                                <span
+                                                    v-if="locale === 'pl'"
+                                                    class="text-destructive"
+                                                    >*</span
+                                                >
+                                            </FieldLabel>
+                                            <Input
+                                                :id="`title-${locale}`"
+                                                type="text"
+                                                v-model="
+                                                    form.translations[locale]
+                                                        .title
+                                                "
+                                                :placeholder="
+                                                    locale === 'pl'
+                                                        ? 'Pole obowiązkowe'
+                                                        : 'Pole nieobowiązkowe'
+                                                "
+                                            />
+                                            <FieldError
+                                                v-if="
+                                                    translationError(
+                                                        locale,
+                                                        'title',
+                                                    )
+                                                "
+                                            >
+                                                {{
+                                                    translationError(
+                                                        locale,
+                                                        'title',
+                                                    )
+                                                }}
+                                            </FieldError>
+                                        </Field>
+
+                                        <Field>
+                                            <FieldLabel :for="`slug-${locale}`"
+                                                >Slug (adres URL)</FieldLabel
+                                            >
+                                            <Input
+                                                :id="`slug-${locale}`"
+                                                type="text"
+                                                v-model="
+                                                    form.translations[locale]
+                                                        .slug
+                                                "
+                                                placeholder="Zostaw puste — zostanie wygenerowany automatycznie"
+                                            />
+                                            <FieldError
+                                                v-if="
+                                                    translationError(
+                                                        locale,
+                                                        'slug',
+                                                    )
+                                                "
+                                            >
+                                                {{
+                                                    translationError(
+                                                        locale,
+                                                        'slug',
+                                                    )
+                                                }}
+                                            </FieldError>
+                                        </Field>
+
+                                        <Field>
+                                            <FieldLabel :for="`intro-${locale}`"
+                                                >Wstęp do projektu</FieldLabel
+                                            >
+                                            <Textarea
+                                                :id="`intro-${locale}`"
+                                                v-model="
+                                                    form.translations[locale]
+                                                        .intro
+                                                "
+                                                placeholder="Pole nieobowiązkowe"
+                                            />
+                                            <FieldError
+                                                v-if="
+                                                    translationError(
+                                                        locale,
+                                                        'intro',
+                                                    )
+                                                "
+                                            >
+                                                {{
+                                                    translationError(
+                                                        locale,
+                                                        'intro',
+                                                    )
+                                                }}
+                                            </FieldError>
+                                        </Field>
+
+                                        <Field>
+                                            <FieldLabel
+                                                :for="`content-${locale}`"
+                                                >Cel projektu</FieldLabel
+                                            >
+                                            <Editor
+                                                :id="`content-${locale}`"
+                                                v-model="
+                                                    form.translations[locale]
+                                                        .content
+                                                "
+                                                placeholder="Pole nieobowiązkowe"
+                                            />
+                                            <FieldError
+                                                v-if="
+                                                    translationError(
+                                                        locale,
+                                                        'content',
+                                                    )
+                                                "
+                                            >
+                                                {{
+                                                    translationError(
+                                                        locale,
+                                                        'content',
+                                                    )
+                                                }}
+                                            </FieldError>
+                                        </Field>
+
+                                        <Field>
+                                            <FieldLabel
+                                                :for="`result-${locale}`"
+                                                >Rezultat</FieldLabel
+                                            >
+                                            <Textarea
+                                                :id="`result-${locale}`"
+                                                v-model="
+                                                    form.translations[locale]
+                                                        .result
+                                                "
+                                                placeholder="Pole nieobowiązkowe"
+                                            />
+                                            <FieldError
+                                                v-if="
+                                                    translationError(
+                                                        locale,
+                                                        'result',
+                                                    )
+                                                "
+                                            >
+                                                {{
+                                                    translationError(
+                                                        locale,
+                                                        'result',
+                                                    )
+                                                }}
+                                            </FieldError>
+                                        </Field>
+
+                                        <Field>
+                                            <FieldLabel
+                                                :for="`site_description-${locale}`"
+                                                >Opis projektu (SEO)</FieldLabel
+                                            >
+                                            <Input
+                                                :id="`site_description-${locale}`"
+                                                type="text"
+                                                v-model="
+                                                    form.translations[locale]
+                                                        .site_description
+                                                "
+                                                placeholder="Pole nieobowiązkowe"
+                                            />
+                                            <FieldError
+                                                v-if="
+                                                    translationError(
+                                                        locale,
+                                                        'site_description',
+                                                    )
+                                                "
+                                            >
+                                                {{
+                                                    translationError(
+                                                        locale,
+                                                        'site_description',
+                                                    )
+                                                }}
+                                            </FieldError>
+                                        </Field>
+
+                                        <Field>
+                                            <FieldLabel
+                                                :for="`site_keyword-${locale}`"
+                                                >Słowa kluczowe
+                                                (SEO)</FieldLabel
+                                            >
+                                            <Input
+                                                :id="`site_keyword-${locale}`"
+                                                type="text"
+                                                v-model="
+                                                    form.translations[locale]
+                                                        .site_keyword
+                                                "
+                                                placeholder="Pole nieobowiązkowe"
+                                            />
+                                            <FieldError
+                                                v-if="
+                                                    translationError(
+                                                        locale,
+                                                        'site_keyword',
+                                                    )
+                                                "
+                                            >
+                                                {{
+                                                    translationError(
+                                                        locale,
+                                                        'site_keyword',
+                                                    )
+                                                }}
+                                            </FieldError>
+                                        </Field>
+                                    </div>
+                                </template>
+                            </div>
+
+                            <!-- Grafiki -->
+                            <Field class="mb-6">
                                 <FieldLabel for="imgFile">Grafika 1</FieldLabel>
                                 <Input
                                     id="imgFile"
                                     name="imgFile"
                                     type="file"
                                     @input="handleFileInput"
-                                    placeholder="Pole nieobowiązkowe"
                                 />
-                                <FieldError v-if="form.errors.imgFile">
-                                    {{ form.errors.imgFile }}
-                                </FieldError>
+                                <FieldError v-if="form.errors.imgFile">{{
+                                    form.errors.imgFile
+                                }}</FieldError>
                                 <progress
                                     v-if="form.progress"
                                     :value="form.progress.percentage"
@@ -151,20 +392,20 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     {{ form.progress.percentage }}%
                                 </progress>
                             </Field>
-                            <Field>
-                                <FieldLabel for="imgFile1">
-                                    Grafika 2
-                                </FieldLabel>
+
+                            <Field class="mb-6">
+                                <FieldLabel for="imgFile1"
+                                    >Grafika 2</FieldLabel
+                                >
                                 <Input
                                     id="imgFile1"
                                     name="imgFile1"
                                     type="file"
                                     @input="handleFileInput1"
-                                    placeholder="Pole nieobowiązkowe"
                                 />
-                                <FieldError v-if="form.errors.imgFile1">
-                                    {{ form.errors.imgFile1 }}
-                                </FieldError>
+                                <FieldError v-if="form.errors.imgFile1">{{
+                                    form.errors.imgFile1
+                                }}</FieldError>
                                 <progress
                                     v-if="form.progress"
                                     :value="form.progress.percentage"
@@ -173,36 +414,8 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     {{ form.progress.percentage }}%
                                 </progress>
                             </Field>
-                            <Field>
-                                <FieldLabel for="site_description">
-                                    Opis strony
-                                </FieldLabel>
-                                <Input
-                                    id="site_description"
-                                    name="site_description"
-                                    type="text"
-                                    v-model="form.site_description"
-                                    placeholder="Pole nieobowiązkowe"
-                                />
-                                <FieldError v-if="form.errors.site_description">
-                                    {{ form.errors.site_description }}
-                                </FieldError>
-                            </Field>
-                            <Field>
-                                <FieldLabel for="site_keyword">
-                                    Słowa kluczowe
-                                </FieldLabel>
-                                <Input
-                                    id="site_keyword"
-                                    name="site_keyword"
-                                    type="text"
-                                    v-model="form.site_keyword"
-                                    placeholder="Pole nieobowiązkowe"
-                                />
-                                <FieldError v-if="form.errors.site_keyword">
-                                    {{ form.errors.site_keyword }}
-                                </FieldError>
-                            </Field>
+
+                            <!-- Ustawienia -->
                             <Field>
                                 <div class="flex items-center gap-3">
                                     <Checkbox
@@ -210,9 +423,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                                         name="approved"
                                         v-model="form.approved"
                                     />
-                                    <FieldLabel for="approved">
-                                        Zaakceptowano
-                                    </FieldLabel>
+                                    <FieldLabel for="approved"
+                                        >Zaakceptowano</FieldLabel
+                                    >
                                 </div>
                             </Field>
                             <Field>
@@ -226,16 +439,19 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 </div>
                             </Field>
                         </FieldGroup>
+
                         <ButtonGroup>
                             <Button variant="outline" as-child>
-                                <Link :href="index().url">
-                                    <ArrowLeftIcon />
-                                    Powrót
-                                </Link>
+                                <Link :href="index().url"
+                                    ><ArrowLeftIcon />Powrót</Link
+                                >
                             </Button>
-                            <Button type="submit" variant="outline">
-                                <SendIcon />
-                                Wyślij
+                            <Button
+                                type="submit"
+                                variant="outline"
+                                :disabled="form.processing"
+                            >
+                                <SendIcon />Wyślij
                             </Button>
                         </ButtonGroup>
                     </FieldSet>
