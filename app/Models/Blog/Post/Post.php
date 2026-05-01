@@ -29,11 +29,6 @@ class Post extends Model
         'comments_allowed' => 'boolean',
     ];
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
     #[Scope]
     protected function approved(Builder $query): void
     {
@@ -46,13 +41,38 @@ class Post extends Model
         $query->where('published', 1);
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function translations(): HasMany
     {
         return $this->hasMany(PostTranslation::class);
     }
 
+
+    // Helpery tłumaczeń
+
     public function translation(): HasOne
     {
         return $this->hasOne(PostTranslation::class)->where('locale', app()->getLocale());
+    }
+
+    public function translate(string $locale): ?PostTranslation
+    {
+        $translation = $this->translations->firstWhere('locale', $locale);
+
+        if (!$translation) {
+            $fallback = config('app.fallback_locale', 'pl');
+            $translation = $this->translations->firstWhere('locale', $fallback);
+        }
+
+        return $translation;
+    }
+
+    public function getCurrentTranslationAttribute(): ?PostTranslation
+    {
+        return $this->translate(app()->getLocale());
     }
 }

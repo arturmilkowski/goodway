@@ -2,32 +2,37 @@
 
 namespace App\Http\Controllers\Admin\Blog\Post;
 
-// use App\Http\Controllers\Controller;
-// use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Blog\Post\Post;
 use App\Http\Requests\Admin\Blog\StorePostRequest;
 
-class PostController // extends Controller
+class PostController
 {
     private string $blogImgPath = 'images/blog';
 
     public function index(): Response
     {
-        $posts = Post::latest()->get();
+        $posts = Post::with([
+            'translations' => fn($q) =>
+            $q->where('locale', 'pl')
+                ->select('post_id', 'locale', 'title', 'slug')
+        ])->latest()->get();
 
         return Inertia::render('admin/blog/post/Index', [
             'posts' => $posts,
-            'path' => asset('storage')
+            'path'  => asset('storage'),
         ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('admin/blog/post/Create');
+        return Inertia::render('admin/blog/post/Create', [
+            'locales' => config('settings.locales', ['pl', 'en']),
+        ]);
     }
 
     public function store(StorePostRequest $request): RedirectResponse
@@ -36,38 +41,62 @@ class PostController // extends Controller
 
         $file = $request->file('imgFile');
         if ($file) {
-            $path = $request->file('imgFile')->storePublicly($this->blogImgPath, 'public');
+            $path = $file->storePublicly($this->blogImgPath, 'public');
             $validated['img'] = $path;
         }
 
         $file1 = $request->file('imgFile1');
         if ($file1) {
-            $path = $request->file('imgFile1')->storePublicly($this->blogImgPath, 'public');
-            $validated['img1'] = $path;
+            $path1 = $file1->storePublicly($this->blogImgPath, 'public');
+            $validated['img1'] = $path1;
         }
 
-        Post::create($validated);
-
-        Inertia::flash([
-            'message' => 'Dodano',
+        $post = Post::create([
+            ...collect($validated)->except('translations')->toArray(),
+            'user_id' => Auth::id(),
         ]);
+
+        foreach ($validated['translations'] as $locale => $translation) {
+            if (empty($translation['title']) || trim($translation['title']) === '') {
+                continue;
+            }
+
+            $post->translations()->create([
+                'locale'           => $locale,
+                'user_id'          => Auth::id(),
+                'slug'             => $translation['slug'],
+                'title'            => $translation['title'],
+                'intro'            => $translation['intro'] ?? null,
+                'content'          => $translation['content'] ?? null,
+                'site_description' => $translation['site_description'] ?? null,
+                'site_keyword'     => $translation['site_keyword'] ?? null,
+            ]);
+        }
+
+        Inertia::flash(['message' => 'Dodano']);
 
         return to_route('admin.blog.posts.index');
     }
 
     public function show(Post $post): Response
     {
+        $post->load(['translations']);
+
         return Inertia::render('admin/blog/post/Show', [
-            'post' => $post,
-            'path' => asset('storage')
+            'post'    => $post,
+            'locales' => config('settings.locales', ['pl', 'en']),
+            'path'    => asset('storage'),
         ]);
     }
 
     public function edit(Post $post): Response
     {
+        $post->load(['translations']);
+
         return Inertia::render('admin/blog/post/Edit', [
-            'post' => $post,
-            'path' => asset('storage')
+            'post'    => $post,
+            'locales' => config('settings.locales', ['pl', 'en']),
+            'path'    => asset('storage'),
         ]);
     }
 
@@ -80,7 +109,7 @@ class PostController // extends Controller
             if ($post->img) {
                 Storage::disk('public')->delete($post->img);
             }
-            $path = $request->file('imgFile')->storePublicly($this->blogImgPath, 'public');
+            $path = $file->storePublicly($this->blogImgPath, 'public');
             $validated['img'] = $path;
         }
 
@@ -89,15 +118,32 @@ class PostController // extends Controller
             if ($post->img1) {
                 Storage::disk('public')->delete($post->img1);
             }
-            $path1 = $request->file('imgFile1')->storePublicly($this->blogImgPath, 'public');
+            $path1 = $file1->storePublicly($this->blogImgPath, 'public');
             $validated['img1'] = $path1;
         }
 
-        $post->update($validated);
+        $post->update(collect($validated)->except('translations')->toArray());
 
-        Inertia::flash([
-            'message' => 'Zmieniono',
-        ]);
+        foreach ($validated['translations'] as $locale => $translation) {
+            if (empty($translation['title']) || trim($translation['title']) === '') {
+                continue;
+            }
+
+            $post->translations()->updateOrCreate(
+                ['locale' => $locale],
+                [
+                    'user_id'          => Auth::id(),
+                    'slug'             => $translation['slug'],
+                    'title'            => $translation['title'],
+                    'intro'            => $translation['intro'] ?? null,
+                    'content'          => $translation['content'] ?? null,
+                    'site_description' => $translation['site_description'] ?? null,
+                    'site_keyword'     => $translation['site_keyword'] ?? null,
+                ]
+            );
+        }
+
+        Inertia::flash(['message' => 'Zmieniono']);
 
         return to_route('admin.blog.posts.show', $post);
     }
@@ -113,9 +159,7 @@ class PostController // extends Controller
 
         $post->delete();
 
-        Inertia::flash([
-            'message' => 'Usunięto',
-        ]);
+        Inertia::flash(['message' => 'Usunięto']);
 
         return to_route('admin.blog.posts.index');
     }

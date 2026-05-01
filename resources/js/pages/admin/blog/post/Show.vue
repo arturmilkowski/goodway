@@ -10,9 +10,44 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { index, show, edit } from '@/routes/admin/blog/posts';
 import type { BreadcrumbItem } from '@/types';
 
-const page = usePage();
+interface Translation {
+    id: number;
+    locale: string;
+    title: string;
+    slug: string;
+    intro: string;
+    content: string;
+    site_description: string;
+    site_keyword: string;
+}
 
-const props = defineProps({ post: Object, path: String });
+interface Post {
+    id: number;
+    img: string | null;
+    img1: string | null;
+    approved: boolean;
+    published: boolean;
+    comments_allowed: boolean;
+    translations: Translation[];
+}
+
+const page_ = usePage();
+
+const props = defineProps<{
+    post: Post;
+    locales: string[];
+    path: string;
+}>();
+
+const localeLabels: Record<string, string> = {
+    pl: '🇵🇱 Polski',
+    en: '🇬🇧 Angielski',
+    de: '🇩🇪 Niemiecki',
+};
+
+function findTranslation(locale: string): Translation | undefined {
+    return props.post.translations?.find((t) => t.locale === locale);
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -23,39 +58,21 @@ const breadcrumbs: BreadcrumbItem[] = [
 </script>
 
 <template>
-    <Head :title="props.post?.title" />
+    <Head :title="findTranslation('pl')?.title ?? 'Wpis'" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
             class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
         >
-            <Alert v-if="page.flash.message">
+            <Alert v-if="page_.flash.message">
                 <CheckCircle2Icon />
-                <AlertTitle>{{ page.flash.message }}</AlertTitle>
+                <AlertTitle>{{ page_.flash.message }}</AlertTitle>
             </Alert>
-            <!--;
-            <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-                <div
-                    class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-                >
-                    <PlaceholderPattern />
-                </div>
-            </div>
-            -->
+
             <div
                 class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border"
             >
-                <!-- <PlaceholderPattern /> -->
+                <!-- Dane główne -->
                 <Table>
                     <TableBody>
                         <TableRow>
@@ -83,32 +100,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </TableCell>
                         </TableRow>
                         <TableRow>
-                            <TableCell>Tytuł</TableCell>
-                            <TableCell>{{ post?.title }}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell> Przyjazny adres </TableCell>
-                            <TableCell>{{ post?.slug }}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Wstęp</TableCell>
-                            <TableCell>{{ post?.intro }}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Zawartość</TableCell>
-                            <TableCell>
-                                <span v-html="post?.content"></span>
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Opis strony</TableCell>
-                            <TableCell>{{ post?.site_description }}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Słowa kluczowe</TableCell>
-                            <TableCell>{{ post?.site_keyword }}</TableCell>
-                        </TableRow>
-                        <TableRow>
                             <TableCell>Zaakceptowano</TableCell>
                             <TableCell>{{ post?.approved }}</TableCell>
                         </TableRow>
@@ -122,13 +113,79 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </TableRow>
                     </TableBody>
                 </Table>
+
+                <!-- Tłumaczenia -->
+                <div class="border-t border-sidebar-border/70 p-4">
+                    <h2 class="mb-3 text-sm font-semibold">Tłumaczenia</h2>
+
+                    <div class="flex flex-col gap-3">
+                        <div
+                            v-for="locale in props.locales"
+                            :key="locale"
+                            class="flex items-center justify-between rounded border border-sidebar-border/70 px-4 py-3"
+                        >
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-medium">
+                                    {{
+                                        localeLabels[locale] ??
+                                        locale.toUpperCase()
+                                    }}
+                                </span>
+                                <template v-if="findTranslation(locale)">
+                                    <span class="text-sm text-muted-foreground">
+                                        {{ findTranslation(locale)?.title }}
+                                    </span>
+                                    <span
+                                        class="inline-block h-2 w-2 rounded-full bg-green-500"
+                                    />
+                                </template>
+                                <template v-else>
+                                    <span
+                                        class="text-sm text-muted-foreground italic"
+                                        >Brak tłumaczenia</span
+                                    >
+                                    <span
+                                        class="inline-block h-2 w-2 rounded-full bg-gray-300"
+                                    />
+                                </template>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <Button
+                                    v-if="findTranslation(locale)"
+                                    variant="outline"
+                                    size="sm"
+                                    as-child
+                                >
+                                    <Link
+                                        :href="`/admin/blog/posts/${post.id}/translations/${findTranslation(locale)!.id}/edit`"
+                                    >
+                                        Edytuj
+                                    </Link>
+                                </Button>
+                                <Button
+                                    v-else
+                                    variant="outline"
+                                    size="sm"
+                                    as-child
+                                >
+                                    <Link
+                                        :href="`/admin/blog/posts/${post.id}/translations/create?locale=${locale}`"
+                                    >
+                                        Dodaj
+                                    </Link>
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="pt-3 pb-5 pl-2">
                     <ButtonGroup>
                         <Button variant="outline" as-child>
-                            <Link :href="index().url">
-                                <ArrowLeftIcon />
-                                Powrót
-                            </Link>
+                            <Link :href="index().url"
+                                ><ArrowLeftIcon />Powrót</Link
+                            >
                         </Button>
                         <Button as-child variant="outline">
                             <Link :href="edit(post?.id).url">Edycja</Link>

@@ -98,7 +98,11 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </TableCell>
                             <TableCell>
                                 <Link :href="show(post.id)">
-                                    {{ post.title }}
+                                    {{
+                                        post.translations?.find(
+                                            (t) => t.locale === 'pl',
+                                        )?.title ?? '—'
+                                    }}
                                 </Link>
                             </TableCell>
                         </TableRow>
