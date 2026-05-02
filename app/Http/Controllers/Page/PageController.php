@@ -10,7 +10,7 @@ use App\Models\Project\Project;
 
 class PageController extends Controller
 {
-    public function index(): View
+    public function index(string $locale): View
     {
         $posts = Post::with(['translation'])
             ->approved()
@@ -29,7 +29,7 @@ class PageController extends Controller
         ]);
     }
 
-    public function show(string $slug): View
+    public function show(string $locale, string $slug): View
     {
         $page = Page::whereHas(
             'translations',

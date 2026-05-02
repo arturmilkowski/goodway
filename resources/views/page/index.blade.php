@@ -8,6 +8,7 @@
     <article class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 mb-16">
 @forelse ($posts as $post)
     @php $pt = $post->translation @endphp
+    @if($pt)
         <article class="flex flex-col hover:bg-zinc-50">
             <h2 class="border-t border-l border-r border-black px-4 pt-2 font-bold text-xs sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">
                 <a href="{{ route('blog.posts.show', $pt?->slug) }}" title="{{ $pt?->title }}">
@@ -49,6 +50,7 @@
                 {{ $post->created_at->format('d.m.Y') }}
             </time>
         </article>
+        @endif
 @empty
         <p>Brak aktualności</p>
 @endforelse
@@ -59,6 +61,7 @@
     <article class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
 @forelse ($projects as $project)
     @php $prt = $project->translation @endphp
+    @if($prt)
         <article class="flex flex-col hover:bg-zinc-50">
             <h2 class="border-t border-l border-r border-black px-4 pt-2 font-bold text-xs sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl">
                 <a href="{{ route('projects.show', $prt?->slug) }}" title="{{ $prt?->title }}">
@@ -100,6 +103,7 @@
                 {{ $project->created_at->format('d.m.Y') }}
             </time>
         </article>
+        @endif
 @empty
         <p>Brak projektów</p>
 @endforelse

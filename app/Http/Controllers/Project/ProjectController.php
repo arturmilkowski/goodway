@@ -7,7 +7,7 @@ use App\Models\Project\Project;
 
 class ProjectController extends Controller
 {
-    public function show(string $slug)
+    public function show(string $locale, string $slug)
     {
         $project = Project::whereHas(
             'translations',
