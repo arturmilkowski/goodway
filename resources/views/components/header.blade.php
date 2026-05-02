@@ -6,8 +6,8 @@
             </h1>
             <nav class="flex gap-8 text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
 @foreach ($pages as $navPage)
-                <a href="{{ $navPage->slug ? route('pages.show', ['page' => $navPage->slug]) : route('home') }}" title="{{ $navPage->intro }}">
-                    {{ $navPage->title }}
+                <a href="{{ $navPage->translation?->slug ? route('pages.show', ['page' => $navPage->translation?->slug]) : route('home') }}" title="{{ $navPage->translation?->intro }}">
+                    {{ $navPage->translation?->title }}
                 </a>
 @endforeach
             </nav>

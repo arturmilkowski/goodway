@@ -18,7 +18,7 @@ class NavComposer
      */
     public function compose(View $view): void
     {
-        $pages = Page::latest()
+        $pages = Page::with(['translation'])
             ->navbar()
             ->notHide()
             ->parentPage()

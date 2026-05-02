@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers\Blog\Post;
 
-// use App\Http\Controllers\Controller;
-// use Illuminate\Http\Request;
 use App\Models\Blog\Post\Post;
 
-class PostController // extends Controller
+class PostController
 {
-    public function __invoke(Post $post) // Request $request
+    public function __invoke(string $slug)
     {
-        return view('blog.post.show', ['post' => $post]);
+        $post = Post::whereHas(
+            'translations',
+            fn($q) =>
+            $q->where('locale', app()->getLocale())
+                ->where('slug', $slug)
+        )->with(['translation'])->firstOrFail();
+
+        return view('blog.post.show', [
+            'post' => $post,
+            'path' => asset('storage'),
+        ]);
     }
 }

@@ -3,31 +3,44 @@
 namespace App\Http\Controllers\Page;
 
 use App\Http\Controllers\Controller;
-// use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Page\Page;
 use App\Models\Blog\Post\Post;
 use App\Models\Project\Project;
 
-
 class PageController extends Controller
 {
-    // private string $blogImgPath = 'images/blog';
-
     public function index(): View
     {
-        $posts = Post::latest()->get(); // approved()->published()
-        $projects = Project::latest()->get();
+        $posts = Post::with(['translation'])
+            ->approved()
+            ->published()
+            ->latest()
+            ->get();
+
+        $projects = Project::with(['translation'])
+            ->latest()
+            ->get();
 
         return view('page.index', [
-            'posts' => $posts,
-            'projects'  => $projects,
-            'path' => asset('storage'),
+            'posts'    => $posts,
+            'projects' => $projects,
+            'path'     => asset('storage'),
         ]);
     }
 
-    public function show(Page $page): View
+    public function show(string $slug): View
     {
-        return view('page.show', ['page' => $page]);
+        $page = Page::whereHas(
+            'translations',
+            fn($q) =>
+            $q->where('locale', app()->getLocale())
+                ->where('slug', $slug)
+        )->with(['translation'])->firstOrFail();
+
+        return view('page.show', [
+            'page' => $page,
+            'path' => asset('storage'),
+        ]);
     }
 }
