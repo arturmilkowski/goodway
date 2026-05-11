@@ -172,7 +172,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                 class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 p-4 md:min-h-min dark:border-sidebar-border"
             >
                 <form @submit.prevent="form.put(update(props.page?.id).url)">
-                    {{ form.errors }}
                     <FieldSet>
                         <FieldGroup>
                             <Field>
@@ -232,7 +231,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     v-for="locale in props.locales"
                                     :key="locale"
                                 >
-                                    <div v-show="activeLocale === locale">
+                                    <div
+                                        v-show="activeLocale === locale"
+                                        class="flex flex-col gap-7"
+                                    >
                                         <Field>
                                             <FieldLabel
                                                 :for="`title-${locale}`"

@@ -145,7 +145,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                                     v-for="locale in props.locales"
                                     :key="locale"
                                 >
-                                    <div v-show="activeLocale === locale">
+                                    <div
+                                        v-show="activeLocale === locale"
+                                        class="flex flex-col gap-7"
+                                    >
                                         <Field>
                                             <FieldLabel
                                                 :for="`title-${locale}`"
